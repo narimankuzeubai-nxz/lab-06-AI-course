@@ -1,66 +1,78 @@
 # REPORT — what the measurement showed, who it affects, and whose responsibility it is
-<!-- STUDENT: replace -->
-
-Replace this whole template with your own text. Delete the line above (the `STUDENT: replace`
-marker) once you have, and delete these instructions and the guiding questions too. Keep the three
-numbered headings. Every number you quote must be one **your own notebook printed**, copied exactly,
-with the group it refers to (which attribute, how many pairs). Which dimension each section is
-graded against is in the README.
-
-The guiding questions are prompts, not a form: you do not have to answer each one in turn, and
-answering them without evidence from your run earns nothing.
-
+All numbers below are copied from my submitted run of `lab06_harness_says_no.ipynb` (Qwen2.5-3B-Instruct, greedy
+decoding, Colab T4, N_PAIRS = 40 per group, SEED = 2026, 400 profiles per configuration).
 ## 1. Measurement read-out
 
-(Dimension: Evidence of Specific Impact.)
+**Decisions (flips) against their floors, bare agent, 40 pairs per group:**
 
-Guiding questions:
+| attribute | flips | rate [95% CI] | floor | floor flips | direction (first / other favoured, McNemar p) |
+|---|---|---|---|---|---|
+| name_language | 2/40 | 5.0% [1.4%, 16.5%] | null_name | 0/40 | kazakh vs others 2/0 (p = 0.500); russian 0/1; english 0/1 |
+| gender_coded_name | 4/40 | 10.0% [4.0%, 23.1%] | null_name | 0/40 | male vs female 0/4 (p = 0.125) |
+| university | 1/40 | 2.5% [0.4%, 12.9%] | null_university | 1/40 | flagship vs regional 1/0 (p = 1.000) |
+**Score differences:** pairs whose scores differ and the mean absolute difference |b − a|:
+name_language 11/40, 3.12 [1.38, 5.25]; gender_coded_name 6/40, 1.12 [0.25, 2.13]; university 10/40, 2.50 [1.12, 4.12];
+floors null_name 7/40, 2.00 [0.62, 3.62] and null_university 9/40, 2.12 [0.88, 3.62]. Signed score shifts (first group
+minus the other): kazakh +0.7 [−1.8, +3.8], russian +0.2 [−1.7, +2.1], english −1.0 [−4.2, +1.9], male vs female
+−0.4 [−1.2, +0.6], flagship vs regional university **+2.5 [+1.1, +4.1]**.
 
-- For each attribute (name language, gender-coded name, university): how many pairs, how many
-  flips, in which direction, and what was the typical score shift? Are these counts and magnitudes,
-  or a description of them?
-- Which attribute moved the decision, and by how much, **read against its own floor**? If a real
-  attribute's divergence is no larger than its floor's, what does that allow you to say, and
-  what does it not?
-- How much of the divergence could be noise? What do the two floors (`null_name` for the name
-  attributes, `null_university` for the university) test, and what do they leave untested (think about
-  what they change and what they keep fixed)? What would a stronger estimate require?
-- If nothing stands clear of its floor: what exactly can you say (counts, intervals), what could your
-  number of pairs have detected and not detected, and why is "no measured effect" not "no effect"?
-- Would the same attribute behave the same way with a different prompt wording, a different
-  model, or real applicants? Say what your run can and cannot support.
+**What this allows me to say.** No attribute stands clear of its own floor on decisions: every 95% interval overlaps
+its floor's, and university (1/40) equals its floor (1/40). The absolute score differences also overlap their floors.
+The exact McNemar test at 0.05 needs at least 6 one-sided discordant pairs out of 40 (15%) with none the other way;
+the largest one-sided count I observed is 4 (all four gender flips favoured the female-coded name, p = 0.125). So this
+run **does not support** a claim that any attribute moved the decision, and an effect that moves fewer than about 6 of
+40 pairs could not have been detected. The one signal whose interval excludes zero is a **small directional score
+shift of +2.5 points towards flagship universities**; it flipped only 1 decision, and the null_university floor has
+no direction to compare it with, so I report it as a score bias, not a decision effect.
+
+
+**What the floors cover and do not cover.** `null_name` changes the name within the same language group and gender
+coding; `null_university` changes the university within the same tier. Both keep the prompt wording, the line order,
+the model and every merit field fixed. They do not measure sensitivity to prompt wording or layout — and my Part 3
+shows that this sensitivity is large: hiding three lines changed the score of 188 of 400 profiles (mean |delta|
+14.92) and the outcome of 49 of 400. A stronger estimate would need more pairs (to detect effects under 15%), several
+prompt wordings, and the optional order probe.
+
+**Generalisation.** These numbers hold for this prompt, this model and these invented profiles only. A different
+wording, model, or real applicants (real names, real universities, missing data) could behave differently.
 
 ## 2. Who is affected
 
-(Dimension: Affected Parties and the Consequences They Bear.)
-
-Guiding questions:
-
-- On each side of a **wrong** decision, who is it? Who is wrongly rejected, and who is wrongly
-  shortlisted (and therefore who is displaced from a limited number of places)? Tie each group
-  to a divergence you measured, not to a general statement that "some groups may be harmed".
-- What does each wrong decision cost the person it falls on (money, a place, time, a record
-  that follows them)? Is the cost the same for a wrongly rejected applicant and a wrongly shortlisted one?
-- Which parties does the brief not mention, but that are affected anyway (people who never
-  applied because they expected to be rejected; the staff who review escalated cases; the fund;
-  applicants from institutions the model has never seen)?
-- If you measured no divergence beyond the floors: who would bear the cost if there were one that your
-  sample could not detect? Tie that to what your number of pairs could and could not see.
-- Which consequences compound when the agent is used year after year, or when its output is
-  used as an input to the next stage (a later review, another fund, a published ranking)?
+- **Wrongly rejected:** in the bare run 44 of 400 profiles were rejected. If the gender pattern (0/4) is real, the
+  male-coded applicant at the margin bears it; if the university score shift is real, applicants from regional
+  universities with scores near the boundary are pushed towards reject. A wrongly rejected applicant loses money for
+  study, possibly the place itself, and gets no explanation — for the poorest (income bracket 1) this can mean not
+  studying at all.
+- **Wrongly shortlisted:** 356 of 400 were shortlisted by the bare agent. Shortlisting is cheaper to undo (a later
+  review), but with a fixed number of scholarships every wrongly shortlisted applicant displaces someone else.
+- **Not mentioned in the brief:** applicants who never applied because they expect such systems to reject them;
+  the reviewers who now read 40 of 400 cases (10.0%); the fund, whose reputation and legal exposure depend on the
+  outcomes; applicants from universities the model has never seen, or with names in Cyrillic or with diacritics —
+  my own name rule would refuse them (a cost I created).
+- **What my sample could not see:** effects below ~6 of 40 pairs. A 5–10% decision shift against one group would be
+  invisible here but, over thousands of applications per year, would affect hundreds of people.
+- **Compounding:** used every year, a +2.5-point flagship shift reinforces the advantage of those already at
+  strong universities; if the shortlist feeds a later review or a published ranking, the bias is inherited downstream.
 
 ## 3. Professional responsibility
 
-(Dimension: Recognition of Professional Responsibility.)
+**My responsibilities as developer of the harness:**
+1. *Do not over-claim.* I must not say the harness "removed bias": the 0/40 flips after blinding are zero by
+   construction. What I can say is that the model no longer sees name, university and age, and that 49 of 400
+   outcomes changed when it stopped seeing them.
+2. *Report fragility.* The deployer must be told that scores moved by 14.92 on average when the prompt changed, so
+   scores are not a stable measure of merit and any threshold must be recalibrated after every prompt change. My band
+   (36, 46) was planned to send 16.0% to a person but actually sent 10.0%.
+3. *Test the refusal path.* Done: the harness refused 5 of 6 test requests with 0 model calls and refused 0 of 400
+   clean applicants.
+4. *Document limits.* n = 40 detects only effects of ≥ 15%; the name rule refuses non-Latin names; the escalation
+   band was not recalibrated on the blinded scores. Still to do: re-measure with more pairs and several prompts.
 
-Guiding questions:
+**Responsibilities of the institution (the fund):** defining the purpose, choosing and training reviewers, giving
+refused and rejected applicants a way to request human review and appeal, deciding retention of the log, and deciding
+whether the system should be used at all.
 
-- Given what you measured, what are **your** specific responsibilities as the developer of the
-  harness: what must you check before it runs, what must you tell the people who deploy it, what
-  must you not claim about it?
-- What would discharging each of those responsibilities require in practice (a test, a
-  documented limit, a stop condition)? What have you actually done in this lab, and what is left?
-- Which responsibilities belong to the **institution** that deploys the system (setting the
-  purpose, choosing who reviews, handling appeals) rather than to you?
-- Where do the two conflict? For example, what happens if the institution wants a control removed
-  because it slows the process or costs money, and you have measured what that control prevents?
+**Where the two conflict:** if the fund wants escalation turned off to save reviewer time (40 cases per 400), I would
+show that those 40 are exactly the borderline and contradictory cases where a score that moves by ~15 points under a
+prompt change decides someone's scholarship. If it insists, my responsibility is to document the removal and its
+measured consequence rather than to silently comply.
