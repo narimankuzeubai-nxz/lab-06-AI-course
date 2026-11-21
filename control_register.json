@@ -1,0 +1,52 @@
+{
+  "harness_controls": [
+    "validate_input",
+    "blind",
+    "refuse",
+    "log",
+    "escalate"
+  ],
+  "format_problems": [],
+  "entries": [
+    {
+      "control": "validate_input",
+      "principle": "Robustness, security and safety",
+      "principle_source": "OECD Recommendation of the Council on Artificial Intelligence, OECD/LEGAL/0449 (2019, amended 2024), principle 1.4 (non-binding recommendation)",
+      "instrument": "Regulation (EU) 2024/1689 (Artificial Intelligence Act), 13 June 2024 -- benchmark, does not bind this fictional fund",
+      "provision": "Article 15(1) and 15(4): high-risk systems shall be accurate, robust and resilient to errors and inconsistencies",
+      "why_here": "The bare pipeline turned a profile with GPA 9.9 and exam score -5 into a reject (Part 4); the harness refused it as invalid_input with 0 model calls and refused 0 of the 400 clean applicants."
+    },
+    {
+      "control": "blind",
+      "principle": "Fairness and non-discrimination",
+      "principle_source": "UNESCO Recommendation on the Ethics of Artificial Intelligence (2021), Section III.2, 'Fairness and non-discrimination' (non-binding recommendation)",
+      "instrument": "Constitution of the Republic of Kazakhstan, 30 August 1995",
+      "provision": "Article 14(2): no one may be discriminated against on grounds of origin, sex, race, nationality, language, or any other circumstance",
+      "why_here": "No attribute cleared its floor on decisions, but flagship universities got +2.5 [+1.1, +4.1] score points and all 4 gender flips favoured female-coded names, so name and university (and age, needed only for refusal) are hidden."
+    },
+    {
+      "control": "refuse",
+      "principle": "Proportionality and Do No Harm; Right to Privacy and Data Protection",
+      "principle_source": "UNESCO Recommendation on the Ethics of Artificial Intelligence (2021), Section III.2 (non-binding recommendation)",
+      "instrument": "Law of the Republic of Kazakhstan No. 94-V 'On Personal Data and Their Protection', 21 May 2013",
+      "provision": "Article 7 (personal data are collected and processed with the consent of the subject); benchmark: Regulation (EU) 2016/679 (GDPR), Article 22(1)-(2)",
+      "why_here": "The bare pipeline shortlisted an 'rank by ethnicity' request and an injected name and screened a minor and a non-consenting applicant; the harness refused all 5 with 0 model calls and 0 wrong refusals."
+    },
+    {
+      "control": "log",
+      "principle": "Responsibility and accountability; transparency and explainability",
+      "principle_source": "OECD Recommendation on AI, OECD/LEGAL/0449 (2019, amended 2024), principles 1.3 and 1.5 (non-binding recommendation)",
+      "instrument": "Regulation (EU) 2024/1689 (Artificial Intelligence Act) -- benchmark; Regulation (EU) 2016/679 (GDPR) -- benchmark",
+      "provision": "AI Act Article 12(1) (automatic recording of events over the lifetime of a high-risk system); GDPR Article 5(2) (accountability)",
+      "why_here": "Blinding changed 49 of 400 outcomes and 188 scores (mean |delta| 14.92), so each decision, escalation and refusal is logged with the hash of the exact text the model saw to make any outcome reconstructable."
+    },
+    {
+      "control": "escalate",
+      "principle": "Human oversight and determination",
+      "principle_source": "UNESCO Recommendation on the Ethics of Artificial Intelligence (2021), Section III.2, 'Human oversight and determination' (non-binding recommendation)",
+      "instrument": "Regulation (EU) 2016/679 (GDPR) -- benchmark; Regulation (EU) 2024/1689 (AI Act), Annex III point 3(a) -- benchmark",
+      "provision": "GDPR Article 22(3) (right to obtain human intervention); AI Act Article 14(1)-(4) (human oversight of high-risk systems)",
+      "why_here": "Scores moved by up to several points under irrelevant changes and by 14.92 on average when the prompt changed, so borderline, merit-contradicting and lowest-income rejections went to a person: 40 of 400 (10.0%)."
+    }
+  ]
+}
